@@ -5,41 +5,39 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useRouter } from "next/router";
 
+
 const TestUser = [{
-    TechCareRole: "Admin",
-    UserManagement: true,
-    ServiceRequest: true,
-    RecentAlarms: true,
-    Cycles: true,
-    Insights: true,
-    DeviceData: true,
-    TroubleShoot: true,
-    Events: true,
-    id: "sdd0"
+    role_name: "Admin",
+    allow_user_management: true,
+    allow_service_request: true,
+    allow_recent_alarms: true,
+    allow_troubleshoot: false,
+    allow_cycles: true,
+    allow_insights: true,
+    allow_device_data: true,
+    allow_events: true,
 
 }, {
-    TechCareRole: "Management",
-    UserManagement: true,
-    ServiceRequest: true,
-    RecentAlarms: true,
-    Cycles: true,
-    Insights: true,
-    DeviceData: true,
-    TroubleShoot: true,
-    Events: true,
-    id: "sdd1"
+    role_name: "Manager",
+    allow_user_management: true,
+    allow_service_request: false,
+    allow_recent_alarms: true,
+    allow_troubleshoot: true,
+    allow_cycles: true,
+    allow_insights: true,
+    allow_device_data: true,
+    allow_events: true,
 
 }, {
-    TechCareRole: "Boss",
-    UserManagement: true,
-    ServiceRequest: true,
-    RecentAlarms: true,
-    Cycles: true,
-    Insights: true,
-    DeviceData: true,
-    TroubleShoot: true,
-    Events: true,
-    id: "sdd2"
+    role_name: "Boss",
+    allow_user_management: true,
+    allow_service_request: true,
+    allow_recent_alarms: true,
+    allow_troubleshoot: true,
+    allow_cycles: true,
+    allow_insights: true,
+    allow_device_data: true,
+    allow_events: true,
 
 }]
 
@@ -60,6 +58,7 @@ const DummyAddRole = [{
 }]
 
 export default function UserManagement() {
+    const [techCareRoles, setTechCareRoles] = useState([...TestUser])
     const [tabValue, setTabValue] = useState(1)
     const [roleTitle, setRoleTitle] = useState('');
     const [addRoleTitle, setAddRoleTitle] = useState('');
@@ -67,13 +66,31 @@ export default function UserManagement() {
     const [techCareRoleFilter, setTechCareRoleFilter] = useState("")
     const [roleMapFilter, setRoleMapFilter] = useState("")
 
+    const fetchTechCareRoles = async () => {
+        let url = "https:/fakeUrl/uers"
+        try {
+            const reqest = await fetch(url)
+            const data = await reqest.json()
+            setTechCareRoles([...data])
+        } catch (error) {
+            console.error(error);
+        }
+    }
+    useEffect(() => {
+
+        // fetchTechCareRoles();
+
+    }
+        , [])
+
+
 
     useEffect(() => {
         if (roleTitle.length <= 0) {
-            setTechCareRoleFilter([...TestUser])
+            setTechCareRoleFilter([...techCareRoles])
         } else {
-            var fltrArr = TestUser.filter((value) => {
-                if (value.TechCareRole.includes(roleTitle, 0)) {
+            var fltrArr = techCareRoles.filter((value) => {
+                if (value.role_name.includes(roleTitle, 0)) {
                     return value;
                 }
             }
@@ -81,7 +98,7 @@ export default function UserManagement() {
             )
             setTechCareRoleFilter([...fltrArr])
         }
-    }, [TestUser, roleTitle])
+    }, [techCareRoles, roleTitle])
 
     useEffect(() => {
         if (addRoleTitle.length <= 0 && techRoleTitle.length <= 0) {
@@ -97,6 +114,17 @@ export default function UserManagement() {
             setRoleMapFilter([...fltrArr])
         }
     }, [DummyAddRole, addRoleTitle, techRoleTitle])
+
+    const deleteTechCareRollHandler = async (name) => {
+        let url = `https://fakeUrl/${name}`
+        try {
+            await fetch(url, { method: 'DELETE' })
+        } catch (error) {
+            console.error(error);
+        }
+
+        console.log(name)
+    }
 
 
     const Router = useRouter()
@@ -192,18 +220,18 @@ export default function UserManagement() {
                     </TableHead>
                     <TableBody>
                         {
-                            (roleTitle.length > 0 ? techCareRoleFilter : TestUser).map(value => {
+                            (roleTitle.length > 0 ? techCareRoleFilter : techCareRoles).map(value => {
                                 return (
-                                    <TableRow key={value.id}>
-                                        <TableCell>{value.TechCareRole}</TableCell>
-                                        <TableCell><Checkbox checked={value.UserManagement} /></TableCell>
-                                        <TableCell><Checkbox checked={value.ServiceRequest} /></TableCell>
-                                        <TableCell><Checkbox checked={value.RecentAlarms} /></TableCell>
-                                        <TableCell><Checkbox checked={value.Cycles} /></TableCell>
-                                        <TableCell><Checkbox checked={value.Insights} /></TableCell>
-                                        <TableCell><Checkbox checked={value.DeviceData} /></TableCell>
-                                        <TableCell><Checkbox checked={value.TroubleShoot} /></TableCell>
-                                        <TableCell><Checkbox checked={value.Events} /></TableCell>
+                                    <TableRow key={value.role_name}>
+                                        <TableCell>{value.role_name}</TableCell>
+                                        <TableCell><Checkbox checked={value.allow_user_management} /></TableCell>
+                                        <TableCell><Checkbox checked={value.allow_service_request} /></TableCell>
+                                        <TableCell><Checkbox checked={value.allow_recent_alarms} /></TableCell>
+                                        <TableCell><Checkbox checked={value.allow_troubleshoot} /></TableCell>
+                                        <TableCell><Checkbox checked={value.allow_cycles} /></TableCell>
+                                        <TableCell><Checkbox checked={value.allow_insights} /></TableCell>
+                                        <TableCell><Checkbox checked={value.allow_device_data} /></TableCell>
+                                        <TableCell><Checkbox checked={value.allow_events} /></TableCell>
                                         <TableCell>
                                             <ButtonGroup
                                                 variant="text"
@@ -211,8 +239,8 @@ export default function UserManagement() {
                                                     translate: '-12px 0'
                                                 }}
                                             >
-                                                <Button onClick={() => Router.push(`/user-management/techcare-role/${value.id}`)}><EditIcon /></Button>
-                                                <Button><DeleteIcon /></Button>
+                                                <Button onClick={() => Router.push(`/user-management/techcare-role/${value.role_name}`)}><EditIcon /></Button>
+                                                <Button onClick={() => { deleteTechCareRollHandler(value.role_name) }}><DeleteIcon /></Button>
                                             </ButtonGroup>
                                         </TableCell>
                                     </TableRow>

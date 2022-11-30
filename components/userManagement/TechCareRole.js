@@ -1,34 +1,57 @@
 import { Button, ButtonGroup, Checkbox, Divider, FormControlLabel, IconButton, Tab, Table, TableBody, TableCell, TableHead, TableRow, Tabs, TextField, Typography, Box } from '@mui/material'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import { useRouter } from 'next/router';
 
 // import { Box } from '@mui/system'
 
+// const TestUser = [{
+//     role_name: "Admin",
+//     allow_user_management: true,
+//     allow_service_request: true,
+//     allow_recent_alarms: true,
+//     allow_troubleshoot: false,
+//     allow_cycles: true,
+//     allow_insights: true,
+//     allow_device_data: true,
+//     allow_events: true,
 
-export default function TakeCareRole() {
+// }]
+
+export default function TakeCareRole({ id }) {
 
 
 
     const [checkBoxValue, setCheckBoxValue] = useState({
-        TechCareRole: "",
-        UserManagement: false,
-        ServiceRequest: false,
-        RecentAlarms: false,
-        Cycles: false,
-        Insights: false,
-        DeviceData: false,
-        TroubleShoot: false,
-        Events: false,
-        id: "sddd"
+        role_name: "",
+        allow_user_management: false,
+        allow_service_request: false,
+        allow_recent_alarms: false,
+        allow_troubleshoot: false,
+        allow_cycles: false,
+        allow_insights: false,
+        allow_device_data: false,
+        allow_events: false,
     })
     const Router = useRouter()
-    // useEffect(() => {
-    //     if (updateObj) {
-    //         setCheckBoxValue({ ...updateObj })
 
-    //     }
-    // }, [updateObj])
+    useEffect(() => {
+        if (!id) {
+            return
+        }
+
+        const getTechCareRoleData = async () => {
+            let url = `https/fakeUrl/${id}`
+            const req = await fetch(url)
+            const data = await req.json()
+            setCheckBoxValue([...data])
+
+        }
+
+        // getTechCareRoleData()
+
+    }, [])
+
 
 
 
@@ -45,8 +68,14 @@ export default function TakeCareRole() {
         });
     }
     const handleAddButtonClick = () => {
+
         console.log(checkBoxValue);
-        console.log(checkBoxValue.TechCareRole.length);
+        console.log(checkBoxValue.role_name.length);
+    }
+    const handleUpdateButtonClick = () => {
+
+        console.log(id)
+        //Write logic for update existing user
     }
 
     return (
@@ -76,7 +105,7 @@ export default function TakeCareRole() {
                     alignItems: 'center',
                 }}>
 
-                    <TextField id="standard-basic" label="TechCare Roll" required variant="standard" sx={{ marginLeft: '15px', translate: '0 -6.5px' }} onChange={handleTechRoleChange} name='TechCareRole' />
+                    <TextField id="standard-basic" label="TechCare Roll" required variant="standard" sx={{ marginLeft: '15px', translate: '0 -6.5px' }} onChange={handleTechRoleChange} name='role_name' />
 
                 </Box>
             </Box>
@@ -103,7 +132,7 @@ export default function TakeCareRole() {
 
                                 control={<Checkbox
 
-                                    name='UserManagement'
+                                    name='allow_user_management'
                                     onChange={handleCheckBoxValues}
                                 />}
                                 label="User Management"
@@ -113,7 +142,7 @@ export default function TakeCareRole() {
                         <TableCell>
                             <FormControlLabel
 
-                                control={<Checkbox name='ServiceRequest'
+                                control={<Checkbox name='allow_service_request'
                                     onChange={handleCheckBoxValues}
                                 />}
                                 label="Service Request"
@@ -122,7 +151,7 @@ export default function TakeCareRole() {
                         <TableCell>
                             <FormControlLabel
 
-                                control={<Checkbox name='RecentAlarms'
+                                control={<Checkbox name='allow_recent_alarms'
                                     onChange={handleCheckBoxValues}
                                 />}
                                 label="Recent Alarms"
@@ -132,7 +161,7 @@ export default function TakeCareRole() {
                         <TableCell>
                             <FormControlLabel
 
-                                control={<Checkbox name='TroubleShoot'
+                                control={<Checkbox name='allow_troubleshoot'
                                     onChange={handleCheckBoxValues}
                                 />}
                                 label="TroubleShoot"
@@ -147,7 +176,7 @@ export default function TakeCareRole() {
                         <TableCell>
                             <FormControlLabel
 
-                                control={<Checkbox name='Cycles'
+                                control={<Checkbox name='allow_cycles'
                                     onChange={handleCheckBoxValues}
                                 />}
                                 label="Cycles"
@@ -157,7 +186,7 @@ export default function TakeCareRole() {
                         <TableCell>
                             <FormControlLabel
 
-                                control={<Checkbox name='Insights'
+                                control={<Checkbox name='allow_insights'
                                     onChange={handleCheckBoxValues}
                                 />}
                                 label="Insights"
@@ -166,7 +195,7 @@ export default function TakeCareRole() {
                         <TableCell>
                             <FormControlLabel
 
-                                control={<Checkbox name='DeviceData'
+                                control={<Checkbox name='allow_device_data'
                                     onChange={handleCheckBoxValues}
                                 />}
                                 label="Device Data"
@@ -176,7 +205,7 @@ export default function TakeCareRole() {
                         <TableCell>
                             <FormControlLabel
 
-                                control={<Checkbox name='Events'
+                                control={<Checkbox name='allow_events'
                                     onChange={handleCheckBoxValues}
                                 />}
                                 label="Events"
@@ -195,14 +224,21 @@ export default function TakeCareRole() {
                 textAlign: 'right',
 
             }}>
-                <Button sx={{
+                {!id ? <Button sx={{
                     marginRight: '10px',
                     padding: '10px',
                     minWidth: '150px',
                 }}
-                    disabled={checkBoxValue.TechCareRole.length < 3 ? true : false}
+                    disabled={checkBoxValue.role_name.length < 3 ? true : false}
 
-                    variant="contained">Add</Button>
+                    variant="contained" onClick={handleAddButtonClick}>Add</Button> : <Button sx={{
+                        marginRight: '10px',
+                        padding: '10px',
+                        minWidth: '150px',
+                    }}
+                        disabled={checkBoxValue.role_name.length < 3 ? true : false}
+
+                        variant="contained" onClick={handleUpdateButtonClick}>Update</Button>}
             </Box>
         </Box>
     )
